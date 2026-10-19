@@ -29,6 +29,8 @@ data class RoutineActivity(
     val reminderMinutesBefore: Int = DEFAULT_REMINDER_MINUTES,
     /** Jours où l'activité a lieu ; null = tous les jours de la routine. */
     val days: Set<IsoDay>? = null,
+    /** Texte du grand bouton de confirmation ; null = « J'ai terminé ». */
+    val confirmLabel: String? = null,
 )
 
 /** Ce qui déclenche le début d'une routine. */

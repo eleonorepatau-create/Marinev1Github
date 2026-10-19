@@ -456,6 +456,13 @@ private fun ActivityEditor(
     OutlinedButton(onClick = { onPreview(draft.instruction) }, modifier = Modifier.heightIn(min = 48.dp)) {
         Text("🔊 Écouter la consigne")
     }
+    OutlinedTextField(
+        value = draft.confirmLabel.orEmpty(),
+        onValueChange = { draft = draft.copy(confirmLabel = it.take(40).ifEmpty { null }) },
+        label = { Text("Texte du grand bouton (vide = « J'ai terminé »)") },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth(),
+    )
 
     Stepper("Durée", "${draft.durationMinutes} min", listOf(-5, -1, 1, 5)) { d ->
         draft = draft.copy(durationMinutes = (draft.durationMinutes + d).coerceIn(1, 180))
@@ -485,7 +492,15 @@ private fun ActivityEditor(
     Spacer(Modifier.height(12.dp))
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Button(
-            onClick = { onSave(draft.copy(name = draft.name.ifBlank { "Activité" }, pictogram = draft.pictogram.ifBlank { "⭐" })) },
+            onClick = {
+                onSave(
+                    draft.copy(
+                        name = draft.name.ifBlank { "Activité" },
+                        pictogram = draft.pictogram.ifBlank { "⭐" },
+                        confirmLabel = draft.confirmLabel?.takeIf { it.isNotBlank() },
+                    ),
+                )
+            },
             modifier = Modifier
                 .weight(1f)
                 .heightIn(min = 56.dp),

@@ -35,7 +35,10 @@ object Defaults {
                 "depart", "Sac, chaussures, manteau",
                 "Prends ton sac, mets tes chaussures et ton manteau.", "🎒", 10,
             ),
-            RoutineActivity("taxi", "J'attends le taxi", "Tout est prêt. Le taxi va arriver.", "🚕", 5),
+            RoutineActivity(
+                "taxi", "Le taxi arrive bientôt", "Tout est prêt. Le taxi va arriver.", "🚕", 5,
+                confirmLabel = "J'attends le taxi",
+            ),
         ),
     )
 

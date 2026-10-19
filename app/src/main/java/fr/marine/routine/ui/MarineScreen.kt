@@ -42,10 +42,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.marine.routine.core.Planning
-import fr.marine.routine.core.RoutineActivity
 import fr.marine.routine.core.RoutineRun
 import fr.marine.routine.core.RoutineRunner
 import fr.marine.routine.core.TimePhase
+import fr.marine.routine.core.Timing
 
 @Composable
 fun MarineScreen(state: UiState, vm: MainViewModel) {
@@ -73,7 +73,7 @@ fun MarineScreen(state: UiState, vm: MainViewModel) {
         val run = state.activeRun
         val celebration = state.celebration
         when {
-            celebration != null -> DoneCard(celebration.activity)
+            celebration != null -> DoneCard(celebration)
             run != null && !run.isFinished -> CurrentActivity(run, state, vm)
             run != null -> RoutineFinished(run, state)
             else -> NothingNow(state, vm)
@@ -105,10 +105,12 @@ private fun CurrentActivity(run: RoutineRun, state: UiState, vm: MainViewModel) 
     Text(activity.instruction, fontSize = 20.sp, color = MarineColors.TextSoft, textAlign = TextAlign.Center)
     Spacer(Modifier.height(20.dp))
 
-    TimeBar(timing.progress)
+    TimeBar(timing.remaining)
+    val confirmLabel = activity.confirmLabel ?: "J'ai terminé"
     val hint = when {
         run.isPaused -> "Pause. On reprend bientôt."
-        timing.phase != TimePhase.IN_PROGRESS -> "Prends ton temps. Appuie sur « J'ai terminé » quand c'est fait."
+        timing.phase != TimePhase.IN_PROGRESS -> "Prends ton temps. Appuie sur « $confirmLabel » quand c'est fait."
+        run.advanceMs >= Timing.MINUTE_MS -> "🌟 Tu as un peu d'avance."
         else -> null
     }
     if (hint != null) {
@@ -132,7 +134,7 @@ private fun CurrentActivity(run: RoutineRun, state: UiState, vm: MainViewModel) 
             .heightIn(min = 100.dp),
         shape = RoundedCornerShape(28.dp),
         colors = ButtonDefaults.buttonColors(containerColor = MarineColors.Violet, contentColor = Color.White),
-    ) { Text("✓  J'ai terminé", fontSize = 30.sp, fontWeight = FontWeight.Bold) }
+    ) { Text("✓  $confirmLabel", fontSize = 30.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center) }
     Spacer(Modifier.height(12.dp))
     Button(
         onClick = vm::requestHelp,
@@ -161,29 +163,42 @@ private fun CurrentActivity(run: RoutineRun, state: UiState, vm: MainViewModel) 
     Spacer(Modifier.height(16.dp))
 }
 
-/** Barre temporelle : se remplit avec le temps écoulé ; aucune heure à lire. */
+/**
+ * Réglette du temps restant, comme une clepsydre : pleine au début de
+ * l'activité, elle se vide jusqu'à la fin du temps prévu. Aucune heure à lire.
+ */
 @Composable
-private fun TimeBar(progress: Float) {
+private fun TimeBar(remaining: Float) {
+    val r = remaining.coerceIn(0f, 1f)
     val description = when {
-        progress >= 1f -> "Le temps prévu est passé"
-        progress >= 0.75f -> "Il reste un peu de temps"
-        progress >= 0.5f -> "La moitié du temps est passée"
-        else -> "Tu as du temps"
+        r <= 0f -> "Le temps prévu est passé"
+        r < 0.25f -> "C'est bientôt fini"
+        r < 0.5f -> "Il te reste un peu de temps"
+        else -> "Il te reste beaucoup de temps"
     }
-    Box(
+    Row(
         Modifier
             .fillMaxWidth()
-            .height(32.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(MarineColors.VioletTrack)
-            .semantics { contentDescription = description },
+            .semantics(mergeDescendants = true) { contentDescription = description },
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+        Text("⏳", fontSize = 28.sp, modifier = Modifier.clearAndSetSemantics { })
+        Spacer(Modifier.size(8.dp))
         Box(
             Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(progress.coerceIn(0f, 1f))
-                .background(MarineColors.Violet),
-        )
+                .weight(1f)
+                .height(36.dp)
+                .clip(RoundedCornerShape(18.dp))
+                .background(MarineColors.VioletTrack),
+        ) {
+            Box(
+                Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(r)
+                    .clip(RoundedCornerShape(18.dp))
+                    .background(MarineColors.Violet),
+            )
+        }
     }
 }
 
@@ -226,7 +241,8 @@ private fun StepsStrip(run: RoutineRun) {
 }
 
 @Composable
-private fun DoneCard(activity: RoutineActivity) {
+private fun DoneCard(celebration: Celebration) {
+    val activity = celebration.activity
     Column(
         Modifier
             .fillMaxWidth()
@@ -241,7 +257,15 @@ private fun DoneCard(activity: RoutineActivity) {
         Text(activity.pictogram, fontSize = 90.sp, modifier = Modifier.clearAndSetSemantics { })
         Text(activity.name, fontSize = 26.sp, fontWeight = FontWeight.Bold, color = MarineColors.Text, textAlign = TextAlign.Center)
         Spacer(Modifier.height(12.dp))
-        Text("✓  Terminé. Bravo !", fontSize = 28.sp, fontWeight = FontWeight.ExtraBold, color = MarineColors.Done)
+        Text("✓  Terminé !", fontSize = 28.sp, fontWeight = FontWeight.ExtraBold, color = MarineColors.Done)
+        Spacer(Modifier.height(8.dp))
+        Text(
+            celebration.feedback.message(),
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            color = MarineColors.Done,
+            textAlign = TextAlign.Center,
+        )
         Spacer(Modifier.height(8.dp))
         Text("⭐ Une étoile de plus !", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MarineColors.Text)
     }

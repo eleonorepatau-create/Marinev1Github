@@ -131,3 +131,48 @@ class RoutineRunTest {
         assertTrue(ParentPin.isValidFormat("1234"))
     }
 }
+
+class AdvanceTest {
+    private val min = Timing.MINUTE_MS
+    private val routine = Defaults.settings().routines.first { it.id == "matin" } // 10, 10, 15…
+    private fun newRun() = RoutineRunner.start(routine, routine.activities, "2026-10-19", 0)
+
+    @Test
+    fun `plus rapide que prevu - felicitation et avance`() {
+        val run = newRun()
+        assertEquals(ConfirmFeedback.FASTER_AND_AHEAD, RoutineRunner.feedback(run, 7 * min))
+        assertEquals(3 * min, RoutineRunner.confirmCurrent(run, 7 * min).advanceMs)
+    }
+
+    @Test
+    fun `a peine plus rapide - felicitation sans annoncer d avance`() {
+        assertEquals(ConfirmFeedback.FASTER, RoutineRunner.feedback(newRun(), 9 * min + 30_000))
+    }
+
+    @Test
+    fun `apres le temps prevu - simple bravo, jamais de retard annonce`() {
+        assertEquals(ConfirmFeedback.WELL_DONE, RoutineRunner.feedback(newRun(), 12 * min))
+    }
+
+    @Test
+    fun `l avance est cumulee sur la routine`() {
+        // Lever en 13 min (3 min de plus), habillage en 8 min (2 min de moins) : pas d'avance globale.
+        val afterWake = RoutineRunner.confirmCurrent(newRun(), 13 * min)
+        assertEquals(ConfirmFeedback.FASTER, RoutineRunner.feedback(afterWake, 21 * min))
+        // Habillage en 5 min : 5 − 3 = 2 min d'avance.
+        assertEquals(ConfirmFeedback.FASTER_AND_AHEAD, RoutineRunner.feedback(afterWake, 18 * min))
+    }
+
+    @Test
+    fun `la pause ne compte pas dans le temps`() {
+        val paused = RoutineRunner.resume(RoutineRunner.pause(newRun(), 2 * min), 12 * min)
+        assertEquals(ConfirmFeedback.FASTER_AND_AHEAD, RoutineRunner.feedback(paused, 15 * min))
+    }
+
+    @Test
+    fun `clepsydre - temps restant`() {
+        val t = RoutineRunner.timing(newRun(), 5 * min, 5)!!
+        assertEquals(0.5f, t.remaining)
+        assertEquals(0f, RoutineRunner.timing(newRun(), 20 * min, 5)!!.remaining)
+    }
+}

@@ -18,6 +18,7 @@ Légende : ✅ vérifié · ⏳ à faire sur téléphone · — hors jalon.
 | Pause | `la pause arrete le temps` | ✅ |
 | Rappel / retard émis une seule fois | `rappel et retard important emis une seule fois` | ✅ |
 | Reprise : enregistrement fidèle | `json aller-retour` | ✅ |
+| En avance : félicitation, avance cumulée, jamais de retard annoncé ; clepsydre | `AdvanceTest` (6 tests) | ✅ |
 | Étoiles : une par activité confirmée, aussi en retard, jamais retirées | `RewardTest` (6 tests) | ✅ |
 
 ## Essais sur téléphone (à réaliser)
@@ -37,5 +38,7 @@ Légende : ✅ vérifié · ⏳ à faire sur téléphone · — hors jalon.
 | T11 | Absence de voix française | Message explicatif dans Parent › Réglages | ⏳ |
 | T12 | Code parent | Espace Parent inaccessible sans le code | ⏳ |
 | T14 | Confirmer des activités sur plusieurs jours, puis le jour de la récompense | Étoiles par jour, total, message « C'est le jour de ta récompense » | ⏳ |
+| T15 | Confirmer une activité bien avant la fin | Carte verte « Bravo, tu as été rapide ! Tu as un peu d'avance. », voix identique, « 🌟 Tu as un peu d'avance » ensuite | ⏳ |
+| T16 | Regarder la réglette pendant une activité | Pleine au début, se vide régulièrement, vide à la fin du temps prévu | ⏳ |
 | T13 | Essai avec Marine | Ajustements selon son ressenti, sans supposer de besoins non exprimés | ⏳ |
 | — | Notification parentale entre deux téléphones | Validée seulement après essai réel entre deux appareils | — |

@@ -23,6 +23,9 @@
 | D17 | Pictogrammes provisoires sous forme d'emoji ; illustrations et avatar définitifs reportés. | Brief | `RoutineActivity.pictogram` |
 | D18 | **Accompagnement, pas évaluation** : une étoile par activité confirmée « J'ai terminé », même après le temps prévu ; aucune étoile retirée ; un jour sans étoile reste neutre (ni croix ni rouge) ; la demande d'aide ne fait rien perdre. | Parent : « pas stressant » | `Rewards`, `WeekStars` |
 | D19 | **Récompense de fin de semaine** choisie par le parent (texte + pictogramme), donnée le samedi par défaut (jour réglable). Par défaut **sans objectif** : toujours donnée. Un objectif d'étoiles est possible en option. Le parent marque « Récompense donnée ». | Parent | `RewardSettings` |
+| D21 | **Réglette en clepsydre** : pleine au début de chaque activité, elle se vide jusqu'à la fin du temps prévu (temps restant visible, sans heure à lire), avec un sablier ⏳. | Parent | `MarineScreen.TimeBar` |
+| D22 | **En avance** : si Marine confirme avant la fin du temps prévu, « Bravo, tu as été rapide ! » ; si son avance cumulée sur la routine atteint 1 min, « Tu as un peu d'avance. » (écrit et lu), et rappel discret « 🌟 Tu as un peu d'avance » pendant l'activité suivante. Le retard n'est jamais annoncé à Marine. | Parent | `RoutineRunner.feedback`, `RoutineRun.advanceMs` |
+| D23 | Étape « Le taxi arrive bientôt » conservée ; son grand bouton s'intitule « J'attends le taxi ». Le texte du bouton est réglable pour chaque activité. | Parent | `RoutineActivity.confirmLabel` |
 | D20 | Rappel vocal reformulé pour encourager : « Tu avances bien. Encore 2 minutes pour… ». Chaque confirmation : « Bravo ! Une étoile de plus. » | Parent : « pas stressant » | `MainViewModel` |
 
 ## Questions ouvertes (réponses attendues)
@@ -30,7 +33,6 @@
 | Question | Bloque |
 |---|---|
 | Modèle et version Android du téléphone de Marine (téléphone absent pour l'instant) | Réglages batterie, lever application fermée, tests physiques |
-| Garder ou non l'étape finale « J'attends le taxi » (5 min de marge) | Réglage (supprimable dans l'application) |
 | Heure habituelle de retour de l'IME | Passage éventuel de la douche en heure fixe |
 | Seuil de retard important et répétition des rappels en cas de dépassement | Valeur par défaut (5 min, sans répétition) |
 | Comportement vocal en mode silencieux / Ne pas déranger | Jalon notifications |

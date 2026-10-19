@@ -18,7 +18,10 @@ data class ActivityTiming(
     /** 0.0 → 1.0, plafonné à 1.0 une fois le temps écoulé. */
     val progress: Float,
     val phase: TimePhase,
-)
+) {
+    /** Temps restant, comme une clepsydre : 1.0 au début, 0.0 à la fin du temps prévu. */
+    val remaining: Float get() = 1f - progress
+}
 
 object Timing {
 

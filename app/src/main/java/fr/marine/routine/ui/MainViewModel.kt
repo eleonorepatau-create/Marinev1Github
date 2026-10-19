@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import fr.marine.routine.core.AutoStart
+import fr.marine.routine.core.ConfirmFeedback
 import fr.marine.routine.core.DayState
 import fr.marine.routine.core.ParentPin
 import fr.marine.routine.core.Planning
@@ -27,7 +28,14 @@ import java.time.LocalTime
 enum class Screen { HOME, PARENT_PIN, MARINE, PARENT }
 
 /** Affichage en vert de l'activité qui vient d'être confirmée. */
-data class Celebration(val activity: RoutineActivity, val untilMs: Long)
+data class Celebration(val activity: RoutineActivity, val untilMs: Long, val feedback: ConfirmFeedback)
+
+/** Félicitation, toujours positive ; un retard n'est jamais mentionné à Marine. */
+fun ConfirmFeedback.message(): String = when (this) {
+    ConfirmFeedback.FASTER_AND_AHEAD -> "Bravo, tu as été rapide ! Tu as un peu d'avance."
+    ConfirmFeedback.FASTER -> "Bravo, tu as été rapide !"
+    ConfirmFeedback.WELL_DONE -> "Bravo !"
+}
 
 data class UiState(
     val settings: Settings,
@@ -144,13 +152,14 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         val run = s.activeRun ?: return
         val done = run.current ?: return
         val now = System.currentTimeMillis()
+        val feedback = RoutineRunner.feedback(run, now)
         val next = RoutineRunner.confirmCurrent(run, now)
         saveDay(s.day.withRun(next))
-        _state.update { it.copy(celebration = Celebration(done, now + 2_500), marineMessage = null) }
+        _state.update { it.copy(celebration = Celebration(done, now + 3_000, feedback), marineMessage = null) }
         val nextActivity = next.current
         speaker.speak(
-            if (nextActivity != null) "Bravo ! Une étoile de plus. ${nextActivity.instruction}"
-            else "Bravo Marine ! Tu as tout terminé. Une étoile de plus pour ta semaine.",
+            if (nextActivity != null) "${feedback.message()} Une étoile de plus. ${nextActivity.instruction}"
+            else "${feedback.message()} Tu as tout terminé, Marine. Une étoile de plus pour ta semaine.",
         )
     }
 

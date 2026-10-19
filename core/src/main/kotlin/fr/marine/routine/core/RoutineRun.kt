@@ -29,6 +29,12 @@ data class RoutineRun(
     val helpRequests: List<HelpRequest> = emptyList(),
     val remindedActivityIds: Set<String> = emptySet(),
     val delaySignaledActivityIds: Set<String> = emptySet(),
+    /**
+     * Avance cumulée depuis le début de la routine (temps prévu − temps réel,
+     * pauses exclues). Positive = Marine a de l'avance. Sert uniquement à
+     * féliciter : un retard n'est jamais annoncé à Marine.
+     */
+    val advanceMs: Long = 0,
 ) {
     val isFinished: Boolean get() = currentIndex >= activities.size
     val current: RoutineActivity? get() = activities.getOrNull(currentIndex)
@@ -42,6 +48,18 @@ data class RoutineRun(
     }
 
     val pendingHelp: List<HelpRequest> get() = helpRequests.filter { !it.acknowledged }
+}
+
+/** Retour donné à Marine après « J'ai terminé » : toujours positif. */
+enum class ConfirmFeedback {
+    /** Plus rapide que prévu, et de l'avance sur l'ensemble de la routine. */
+    FASTER_AND_AHEAD,
+
+    /** Plus rapide que prévu pour cette activité. */
+    FASTER,
+
+    /** Simple félicitation. */
+    WELL_DONE,
 }
 
 /** Événement à traiter par l'interface (voix, alerte locale). */
@@ -65,13 +83,30 @@ object RoutineRunner {
     /** Confirmation explicite « J'ai terminé » : seule façon de terminer une activité. */
     fun confirmCurrent(run: RoutineRun, nowMs: Long): RoutineRun {
         val current = run.current ?: return run
+        val gained = current.durationMinutes * Timing.MINUTE_MS - run.elapsedMs(nowMs)
         return run.copy(
+            advanceMs = run.advanceMs + gained,
             completedAtMs = run.completedAtMs + (current.id to nowMs),
             currentIndex = run.currentIndex + 1,
             currentStartedAtMs = nowMs,
             pausedAtMs = null,
             pausedTotalMs = 0,
         )
+    }
+
+    /**
+     * Félicitation à donner pour la confirmation de [before] à [nowMs].
+     * Une avance n'est annoncée qu'à partir d'une minute, pour rester vraie.
+     */
+    fun feedback(before: RoutineRun, nowMs: Long): ConfirmFeedback {
+        val current = before.current ?: return ConfirmFeedback.WELL_DONE
+        val faster = before.elapsedMs(nowMs) < current.durationMinutes * Timing.MINUTE_MS
+        val after = confirmCurrent(before, nowMs)
+        return when {
+            faster && after.advanceMs >= Timing.MINUTE_MS -> ConfirmFeedback.FASTER_AND_AHEAD
+            faster -> ConfirmFeedback.FASTER
+            else -> ConfirmFeedback.WELL_DONE
+        }
     }
 
     /** Demande d'aide : enregistrée, mais ne valide jamais l'activité. */
