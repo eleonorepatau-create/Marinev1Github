@@ -21,6 +21,8 @@ téléphone, de la routine paramétrable.
 | « J'ai besoin d'aide » distinct, ne valide pas l'activité | ✅ (testé) |
 | Seuil de « retard important » réglable | ✅ affiché sur ce téléphone |
 | Pause / reprise par le parent | ✅ |
+| Étoiles de la semaine (une par activité confirmée, jamais retirées) et récompense de fin de semaine choisie par le parent | ✅ (testé) |
+| Ton encourageant, sans rouge ni alarme, sans validation automatique | ✅ |
 | Reprise après fermeture ou redémarrage de l'application | ✅ stockage local |
 | Code parent (4 à 8 chiffres, stocké sous forme d'empreinte) | ✅ facultatif |
 | Couleurs : violet pour Marine, vert pour Parent | ✅ |

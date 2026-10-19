@@ -47,6 +47,8 @@ import fr.marine.routine.core.ParentPin
 import fr.marine.routine.core.Planning
 import fr.marine.routine.core.Routine
 import fr.marine.routine.core.RoutineActivity
+import fr.marine.routine.core.RewardSettings
+import fr.marine.routine.core.Rewards
 import fr.marine.routine.core.RoutineRunner
 import fr.marine.routine.core.SCHOOL_DAYS
 import fr.marine.routine.core.Settings
@@ -105,6 +107,7 @@ private fun TrackingTab(state: UiState, vm: MainViewModel) {
             "mais ne sont PAS encore envoyés à un autre téléphone.",
         color = MarineColors.OnHelp,
     )
+    WeekReward(state, vm)
     val today = state.settings.routines.filter { Planning.appliesOn(it, state.today) }
     if (today.isEmpty()) Note("Aucune routine prévue aujourd'hui.")
     today.forEach { routine -> RoutineTracking(routine, state, vm) }
@@ -191,6 +194,21 @@ private fun RoutineTracking(routine: Routine, state: UiState, vm: MainViewModel)
             OutlinedButton(onClick = { vm.resetRun(routine.id) }, modifier = Modifier.heightIn(min = 48.dp)) {
                 Text("Recommencer")
             }
+        }
+    }
+}
+
+@Composable
+private fun WeekReward(state: UiState, vm: MainViewModel) {
+    val reward = state.settings.reward
+    SectionCard("Semaine et récompense") {
+        WeekStars(state)
+        if (reward.enabled) {
+            val given = Rewards.isGiven(state.day, state.today)
+            Toggle(if (given) "✓ Récompense donnée cette semaine" else "Marquer la récompense comme donnée", given) {
+                vm.setRewardGiven(!given)
+            }
+            if (reward.description.isBlank()) Note("Choisissez la récompense dans l'onglet Réglages.")
         }
     }
 }
@@ -568,6 +586,43 @@ private fun SettingsTab(state: UiState, vm: MainViewModel) {
             vm.updateSettings { it.copy(significantDelayMinutes = (it.significantDelayMinutes + d).coerceIn(1, 60)) }
         }
         Note("Quand le temps est passé, l'activité reste affichée chez Marine et n'est jamais validée automatiquement.")
+    }
+
+    SectionCard("Récompense de la semaine") {
+        val r = s.reward
+        fun updateReward(transform: (RewardSettings) -> RewardSettings) =
+            vm.updateSettings { it.copy(reward = transform(it.reward)) }
+        Toggle(if (r.enabled) "Récompense activée" else "Récompense désactivée", r.enabled) {
+            updateReward { it.copy(enabled = !it.enabled) }
+        }
+        OutlinedTextField(
+            value = r.description,
+            onValueChange = { v -> updateReward { it.copy(description = v.take(80)) } },
+            label = { Text("Récompense (ex. sortie au parc)") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        OutlinedTextField(
+            value = r.pictogram,
+            onValueChange = { v -> updateReward { it.copy(pictogram = v.take(8)) } },
+            label = { Text("Pictogramme") },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Note("Jour de la récompense")
+        DaysSelector(setOf(r.day)) { days ->
+            (days - r.day).firstOrNull()?.let { d -> updateReward { it.copy(day = d) } }
+        }
+        val goal = r.starsGoal
+        Toggle(if (goal == null) "Sans objectif : toujours donnée" else "Objectif d'étoiles", goal == null) {
+            updateReward { it.copy(starsGoal = if (goal == null) 20 else null) }
+        }
+        if (goal != null) {
+            Stepper("Étoiles à réunir dans la semaine", "$goal", listOf(-5, -1, 1, 5)) { d ->
+                updateReward { it.copy(starsGoal = (goal + d).coerceIn(1, 100)) }
+            }
+        }
+        Note("Une étoile par activité confirmée, même après le temps prévu. Aucune étoile n'est retirée.")
     }
 
     SectionCard("Voix") {

@@ -10,6 +10,8 @@ data class DayState(
     /** Routine actuellement affichée chez Marine (routineId), pour la date [activeDate]. */
     val activeRoutineId: String? = null,
     val activeDate: String? = null,
+    /** Semaines (lundi, AAAA-MM-JJ) dont la récompense a été donnée. */
+    val rewardsGivenWeeks: Set<String> = emptySet(),
 ) {
     fun runFor(routineId: String, date: String): RoutineRun? =
         runs.firstOrNull { it.routineId == routineId && it.date == date }
@@ -27,12 +29,25 @@ data class DayState(
     fun activate(run: RoutineRun): DayState =
         withRun(run).copy(activeRoutineId = run.routineId, activeDate = run.date)
 
-    /** Ne garde que les déroulements récents (minimisation des données). */
+    /**
+     * Ne garde que les déroulements récents (minimisation des données),
+     * et toujours ceux de la semaine en cours (étoiles de la récompense).
+     */
     fun prune(today: LocalDate, keepDays: Long = 7): DayState {
-        val limit = today.minusDays(keepDays)
+        val limit = minOf(today.minusDays(keepDays), Rewards.weekStart(today))
         val kept = runs.filter { LocalDate.parse(it.date) >= limit }
+        val weeks = rewardsGivenWeeks.filter { LocalDate.parse(it) >= Rewards.weekStart(today).minusWeeks(4) }.toSet()
         val activeStillThere = kept.any { it.routineId == activeRoutineId && it.date == activeDate }
-        return if (activeStillThere) copy(runs = kept) else DayState(runs = kept)
+        return if (activeStillThere) {
+            copy(runs = kept, rewardsGivenWeeks = weeks)
+        } else {
+            DayState(runs = kept, rewardsGivenWeeks = weeks)
+        }
+    }
+
+    fun withRewardGiven(date: LocalDate, given: Boolean): DayState {
+        val week = Rewards.weekStart(date).toString()
+        return copy(rewardsGivenWeeks = if (given) rewardsGivenWeeks + week else rewardsGivenWeeks - week)
     }
 }
 

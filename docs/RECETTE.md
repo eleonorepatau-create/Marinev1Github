@@ -18,6 +18,7 @@ Légende : ✅ vérifié · ⏳ à faire sur téléphone · — hors jalon.
 | Pause | `la pause arrete le temps` | ✅ |
 | Rappel / retard émis une seule fois | `rappel et retard important emis une seule fois` | ✅ |
 | Reprise : enregistrement fidèle | `json aller-retour` | ✅ |
+| Étoiles : une par activité confirmée, aussi en retard, jamais retirées | `RewardTest` (6 tests) | ✅ |
 
 ## Essais sur téléphone (à réaliser)
 
@@ -35,5 +36,6 @@ Légende : ✅ vérifié · ⏳ à faire sur téléphone · — hors jalon.
 | T10 | Mode silencieux / Ne pas déranger | Noter le comportement de la voix | ⏳ |
 | T11 | Absence de voix française | Message explicatif dans Parent › Réglages | ⏳ |
 | T12 | Code parent | Espace Parent inaccessible sans le code | ⏳ |
+| T14 | Confirmer des activités sur plusieurs jours, puis le jour de la récompense | Étoiles par jour, total, message « C'est le jour de ta récompense » | ⏳ |
 | T13 | Essai avec Marine | Ajustements selon son ressenti, sans supposer de besoins non exprimés | ⏳ |
 | — | Notification parentale entre deux téléphones | Validée seulement après essai réel entre deux appareils | — |

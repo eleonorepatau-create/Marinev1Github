@@ -75,7 +75,7 @@ fun MarineScreen(state: UiState, vm: MainViewModel) {
         when {
             celebration != null -> DoneCard(celebration.activity)
             run != null && !run.isFinished -> CurrentActivity(run, state, vm)
-            run != null -> RoutineFinished(run)
+            run != null -> RoutineFinished(run, state)
             else -> NothingNow(state, vm)
         }
     }
@@ -242,11 +242,13 @@ private fun DoneCard(activity: RoutineActivity) {
         Text(activity.name, fontSize = 26.sp, fontWeight = FontWeight.Bold, color = MarineColors.Text, textAlign = TextAlign.Center)
         Spacer(Modifier.height(12.dp))
         Text("✓  Terminé. Bravo !", fontSize = 28.sp, fontWeight = FontWeight.ExtraBold, color = MarineColors.Done)
+        Spacer(Modifier.height(8.dp))
+        Text("⭐ Une étoile de plus !", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MarineColors.Text)
     }
 }
 
 @Composable
-private fun RoutineFinished(run: RoutineRun) {
+private fun RoutineFinished(run: RoutineRun, state: UiState) {
     Spacer(Modifier.height(24.dp))
     Text("🌟", fontSize = 100.sp, modifier = Modifier.clearAndSetSemantics { })
     Text(
@@ -257,6 +259,8 @@ private fun RoutineFinished(run: RoutineRun) {
         textAlign = TextAlign.Center,
     )
     Spacer(Modifier.height(16.dp))
+    WeekStars(state)
+    Spacer(Modifier.height(8.dp))
     run.activities.forEach { a ->
         Row(
             Modifier
@@ -286,7 +290,9 @@ private fun NothingNow(state: UiState, vm: MainViewModel) {
         color = MarineColors.Text,
         textAlign = TextAlign.Center,
     )
-    Spacer(Modifier.height(24.dp))
+    Spacer(Modifier.height(16.dp))
+    WeekStars(state)
+    Spacer(Modifier.height(8.dp))
     val manual = state.settings.routines.filter { r ->
         Planning.appliesOn(r, state.today) &&
             Planning.startTime(r, state.settings, state.today) == null &&

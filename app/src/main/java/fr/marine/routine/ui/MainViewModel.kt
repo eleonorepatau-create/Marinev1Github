@@ -97,10 +97,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     private fun reminderText(activity: RoutineActivity): String {
         val reminderAt = Timing.reminderAtMs(activity) ?: 0
         val remainingMin = ((activity.durationMinutes * Timing.MINUTE_MS - reminderAt) / Timing.MINUTE_MS).toInt()
+        // Ton d'accompagnement : encourager, sans presser.
         return when {
-            remainingMin >= 2 -> "Il te reste $remainingMin minutes pour : ${activity.name}."
-            remainingMin == 1 -> "Il te reste une minute pour : ${activity.name}."
-            else -> "C'est bientôt fini : ${activity.name}."
+            remainingMin >= 2 -> "Tu avances bien. Encore $remainingMin minutes pour : ${activity.name}."
+            remainingMin == 1 -> "Tu avances bien. Encore une minute pour : ${activity.name}."
+            else -> "Tu avances bien. C'est bientôt fini : ${activity.name}."
         }
     }
 
@@ -148,8 +149,8 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         _state.update { it.copy(celebration = Celebration(done, now + 2_500), marineMessage = null) }
         val nextActivity = next.current
         speaker.speak(
-            if (nextActivity != null) "Bravo ! ${nextActivity.instruction}"
-            else "Bravo Marine ! Tu as tout terminé.",
+            if (nextActivity != null) "Bravo ! Une étoile de plus. ${nextActivity.instruction}"
+            else "Bravo Marine ! Tu as tout terminé. Une étoile de plus pour ta semaine.",
         )
     }
 
@@ -190,6 +191,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         store.saveSettings(updated)
         speaker.setRate(updated.speechRate)
         _state.update { it.copy(settings = updated) }
+    }
+
+    fun setRewardGiven(given: Boolean) {
+        val s = _state.value
+        saveDay(s.day.withRewardGiven(s.today, given))
     }
 
     fun setParentPin(pin: String?) = updateSettings { it.copy(parentPin = pin?.let(ParentPin::create)) }

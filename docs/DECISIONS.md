@@ -21,6 +21,9 @@
 | D15 | Données uniquement sur le téléphone, sans sauvegarde en ligne ni transfert automatique ; aucune permission réseau. Déroulements conservés 7 jours. | Minimisation | Manifest, `DayState.prune` |
 | D16 | Code parent facultatif, empreinte SHA-256 salée (10 000 itérations), jamais stocké en clair. | Protection des comptes | `ParentPin` |
 | D17 | Pictogrammes provisoires sous forme d'emoji ; illustrations et avatar définitifs reportés. | Brief | `RoutineActivity.pictogram` |
+| D18 | **Accompagnement, pas évaluation** : une étoile par activité confirmée « J'ai terminé », même après le temps prévu ; aucune étoile retirée ; un jour sans étoile reste neutre (ni croix ni rouge) ; la demande d'aide ne fait rien perdre. | Parent : « pas stressant » | `Rewards`, `WeekStars` |
+| D19 | **Récompense de fin de semaine** choisie par le parent (texte + pictogramme), donnée le samedi par défaut (jour réglable). Par défaut **sans objectif** : toujours donnée. Un objectif d'étoiles est possible en option. Le parent marque « Récompense donnée ». | Parent | `RewardSettings` |
+| D20 | Rappel vocal reformulé pour encourager : « Tu avances bien. Encore 2 minutes pour… ». Chaque confirmation : « Bravo ! Une étoile de plus. » | Parent : « pas stressant » | `MainViewModel` |
 
 ## Questions ouvertes (réponses attendues)
 
@@ -33,3 +36,4 @@
 | Comportement vocal en mode silencieux / Ne pas déranger | Jalon notifications |
 | Mode d'association sécurisé des deux téléphones et hébergement | Synchronisation, alertes parent |
 | Voix (vitesse, type) | Réglage (vitesse déjà réglable) |
+| Quelle récompense, quel jour (samedi par défaut), avec ou sans objectif d'étoiles | Réglage dans Parent › Réglages |

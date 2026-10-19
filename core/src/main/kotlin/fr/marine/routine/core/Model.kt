@@ -81,6 +81,7 @@ data class Settings(
     val speechRate: Float = 0.9f,
     /** Code parent (empreinte salée) ; null = pas de code. */
     val parentPin: PinHash? = null,
+    val reward: RewardSettings = RewardSettings(),
 )
 
 @Serializable
