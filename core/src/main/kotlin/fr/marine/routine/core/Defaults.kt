@@ -7,8 +7,8 @@ package fr.marine.routine.core
  *
  * Durées du matin fournies par le parent (réveil 10, habillage 10, petit
  * déjeuner 15, toilette 10, sac/chaussures/manteau 10) ; l'attente du taxi
- * (5 min) complète l'heure entre le lever et le taxi. Les durées des autres
- * routines restent des exemples. Aucune heure de taxi n'est présumée : tant que le
+ * (5 min) complète l'heure entre le lever et le taxi. Douche 15 min,
+ * lavage des cheveux 10 min. Aucune heure de taxi n'est présumée : tant que le
  * parent ne l'a pas saisie, la routine du matin ne démarre pas toute seule.
  */
 object Defaults {
@@ -55,7 +55,7 @@ object Defaults {
         anchor = Anchor.Manual,
         days = setOf(3),
         activities = listOf(
-            RoutineActivity("cheveux-mer", "Je me lave les cheveux", "C'est le moment de te laver les cheveux.", "🧴", 15),
+            RoutineActivity("cheveux-mer", "Je me lave les cheveux", "C'est le moment de te laver les cheveux.", "🧴", 10),
         ),
     )
 
@@ -65,7 +65,7 @@ object Defaults {
         anchor = Anchor.Manual,
         days = setOf(7),
         activities = listOf(
-            RoutineActivity("cheveux-dim", "Je me lave les cheveux", "C'est le moment de te laver les cheveux.", "🧴", 15),
+            RoutineActivity("cheveux-dim", "Je me lave les cheveux", "C'est le moment de te laver les cheveux.", "🧴", 10),
         ),
     )
 }

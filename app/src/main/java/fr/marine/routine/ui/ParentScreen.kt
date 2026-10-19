@@ -205,7 +205,7 @@ private fun RoutinesTab(state: UiState, vm: MainViewModel) {
         RoutineEditor(editing, vm, onClose = { editingId = null })
         return
     }
-    Note("Durées du matin réglées selon vos indications ; les autres sont des exemples à ajuster.")
+    Note("Durées réglées selon vos indications ; modifiables à tout moment.")
     Note("Une modification s'applique au prochain démarrage de la routine, pas à celle en cours.")
     state.settings.routines.forEach { r ->
         SectionCard(r.name) {
