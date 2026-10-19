@@ -8,7 +8,7 @@
 | D2 | **Lever = heure du taxi − 60 min**, recalculé chaque jour. Il ne dépend jamais de la somme des durées. | Règle confirmée | `Planning.startTime` |
 | D3 | Changer le taxi d'un jour crée une exception datée : les autres jours ne changent pas. « Pas de taxi ce jour » est possible. Les exceptions passées sont effacées. | Règle confirmée | `Planning.withTaxiOverride` |
 | D4 | Aucune heure de taxi n'est présumée : sans heure saisie, la routine du matin ne démarre pas toute seule. | Pas d'heure fixe présumée | `Defaults` |
-| D5 | Les durées livrées sont des **exemples** à régler (aucune durée réelle fournie) ; l'interface le signale. | Pas de durée présumée | `Defaults`, onglet Routines |
+| D5 | Matin (durées fournies) : réveil 10 min, habillage 10, petit déjeuner 15, dents + visage + crème + coiffure 10, sac + chaussures + manteau 10 = 55 min. Une étape « J'attends le taxi » de 5 min complète l'heure jusqu'au taxi (à confirmer). Les durées des autres routines restent des exemples. | Durées fournies | `Defaults` |
 | D6 | Douche au retour de l'IME, cheveux mercredi et dimanche : **démarrage manuel** (heure de retour variable, non fournie). Le parent peut passer à une heure fixe. | Précisions de routine | `Defaults` |
 | D7 | Rappel vocal par défaut 2 min avant la fin, réglable par activité de 0 (aucun) à 60 min. | Brief | `Timing.reminderAtMs` |
 | D8 | **Durée ≤ délai de rappel** (ex. activité de 2 min, rappel à 2 min) : le rappel est donné **à mi-durée**, pour ne pas tomber en même temps que la consigne de début. | Brief : « définir et documenter » | `Timing.reminderAtMs` |
@@ -27,7 +27,8 @@
 | Question | Bloque |
 |---|---|
 | Modèle et version Android du téléphone de Marine (téléphone absent pour l'instant) | Réglages batterie, lever application fermée, tests physiques |
-| Durées réelles de chaque étape du matin | Réglage final (modifiable dans l'application en attendant) |
+| Garder ou non l'étape finale « J'attends le taxi » (5 min de marge) | Réglage (supprimable dans l'application) |
+| Durées de la douche et du lavage des cheveux | Réglage (exemples de 15 min en attendant) |
 | Heure habituelle de retour de l'IME | Passage éventuel de la douche en heure fixe |
 | Seuil de retard important et répétition des rappels en cas de dépassement | Valeur par défaut (5 min, sans répétition) |
 | Comportement vocal en mode silencieux / Ne pas déranger | Jalon notifications |

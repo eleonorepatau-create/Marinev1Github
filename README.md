@@ -8,7 +8,7 @@ téléphone, de la routine paramétrable.
 
 | Fonction | État |
 |---|---|
-| Routine du matin : lever, habillage, petit déjeuner, dents, chaussures, départ taxi | ✅ paramétrable |
+| Routine du matin : réveil 10 min, habillage 10, petit déjeuner 15, dents/visage/crème/cheveux 10, sac/chaussures/manteau 10, attente du taxi 5 | ✅ paramétrable |
 | Lever calculé automatiquement : **heure du taxi − 60 min**, chaque jour | ✅ (testé) |
 | Taxi modifié pour un jour seulement, sans toucher aux autres jours | ✅ (testé) |
 | Douche au retour de l'IME, cheveux mercredi après-midi et dimanche matin, activités ponctuelles | ✅ démarrage manuel |

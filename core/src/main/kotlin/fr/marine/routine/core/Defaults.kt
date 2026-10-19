@@ -5,8 +5,10 @@ package fr.marine.routine.core
  * ordre du matin, douche au retour de l'IME, lavage des cheveux le mercredi
  * après-midi et le dimanche matin.
  *
- * Les DURÉES sont des valeurs d'exemple à régler par le parent : aucune durée
- * réelle n'a été fournie. Aucune heure de taxi n'est présumée : tant que le
+ * Durées du matin fournies par le parent (réveil 10, habillage 10, petit
+ * déjeuner 15, toilette 10, sac/chaussures/manteau 10) ; l'attente du taxi
+ * (5 min) complète l'heure entre le lever et le taxi. Les durées des autres
+ * routines restent des exemples. Aucune heure de taxi n'est présumée : tant que le
  * parent ne l'a pas saisie, la routine du matin ne démarre pas toute seule.
  */
 object Defaults {
@@ -22,12 +24,18 @@ object Defaults {
         anchor = Anchor.BeforeTaxi(DEFAULT_WAKE_UP_BEFORE_TAXI_MINUTES),
         days = SCHOOL_DAYS,
         activities = listOf(
-            RoutineActivity("lever", "Je me lève", "Bonjour Marine. C'est le moment de te lever.", "🛏️", 10),
-            RoutineActivity("habillage", "Je m'habille", "Habille-toi.", "👕", 15),
-            RoutineActivity("petit-dejeuner", "Je prends mon petit déjeuner", "C'est l'heure du petit déjeuner.", "🥣", 20),
-            RoutineActivity("dents", "Je me brosse les dents", "Brosse-toi les dents.", "🪥", 5),
-            RoutineActivity("chaussures", "Je mets mes chaussures", "Mets tes chaussures.", "👟", 5),
-            RoutineActivity("taxi", "Je pars avec le taxi", "Le taxi va arriver. Prépare-toi à partir.", "🚕", 5),
+            RoutineActivity("lever", "Je me réveille", "Bonjour Marine. C'est le moment de te réveiller.", "🛏️", 10),
+            RoutineActivity("habillage", "Je m'habille", "Habille-toi.", "👕", 10),
+            RoutineActivity("petit-dejeuner", "Je prends mon petit déjeuner", "C'est l'heure du petit déjeuner.", "🥣", 15),
+            RoutineActivity(
+                "toilette", "Dents, visage, crème, cheveux",
+                "Brosse-toi les dents, lave-toi le visage, mets ta crème et coiffe-toi.", "🪥", 10,
+            ),
+            RoutineActivity(
+                "depart", "Sac, chaussures, manteau",
+                "Prends ton sac, mets tes chaussures et ton manteau.", "🎒", 10,
+            ),
+            RoutineActivity("taxi", "J'attends le taxi", "Tout est prêt. Le taxi va arriver.", "🚕", 5),
         ),
     )
 
